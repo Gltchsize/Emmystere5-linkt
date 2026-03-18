@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emmystere5 - Linktree</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg:      #04080f;
+            --blue:    #1a4fff;
+            --cyan:    #00c8ff;
+            --ice:     #a8d8ff;
+            --surface: rgba(0, 100, 200, 0.06);
+            --border:  rgba(0, 150, 255, 0.12);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background-color: var(--bg);
+            color: #dff0ff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+            overflow-x: hidden;
+        }
+
+        /* ── Background ── */
+        .bg-canvas {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(110px);
+            opacity: 0.2;
+            animation: drift 20s ease-in-out infinite;
+        }
+        .orb-1 { width: 700px; height: 700px; background: #0033bb; top: -260px; left: -200px; animation-delay: 0s; }
+        .orb-2 { width: 450px; height: 450px; background: #0088dd; bottom: -160px; right: -100px; animation-delay: -8s; }
+        .orb-3 { width: 280px; height: 280px; background: #00ccff; top: 40%; left: 55%; animation-delay: -14s; opacity: 0.1; }
+
+        @keyframes drift {
+            0%,100% { transform: translate(0,0) scale(1); }
+            33%      { transform: translate(35px,-25px) scale(1.04); }
+            66%      { transform: translate(-20px,45px) scale(0.96); }
+        }
+
+        /* Scanline overlay */
+        .bg-canvas::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0,80,180,0.015) 2px,
+                rgba(0,80,180,0.015) 4px
+            );
+            pointer-events: none;
+        }
+
+        /* ── Container ── */
+        .container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 480px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2.2rem;
+        }
+
+        /* ── Live banner ── */
+        .live-banner {
+            display: none;
+            width: 100%;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            padding: 0.65rem 1.2rem;
+            border-radius: 12px;
+            background: rgba(233,25,22,0.1);
+            border: 1px solid rgba(233,25,22,0.28);
+            text-decoration: none;
+            color: #ff9999;
+            font-size: 0.84rem;
+            font-weight: 500;
+            animation: fadeUp 0.6s ease both;
+            transition: background 0.2s, border-color 0.2s;
+        }
+        .live-banner:hover { background: rgba(233,25,22,0.18); border-color: rgba(233,25,22,0.5); }
+        .live-banner.visible { display: flex; }
+
+        .live-banner-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: #e91916;
+            animation: blink 1.2s ease-in-out infinite;
+            flex-shrink: 0;
+        }
+
+        /* ── Profile ── */
+        .profile {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            animation: fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) both;
+        }
+
+        .avatar-wrap {
+            position: relative;
+            width: 108px;
+            height: 108px;
+        }
+
+        .avatar-ring {
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            background: conic-gradient(from 0deg, #0044ff, #00aaff, #00e5ff, #007fff, #0044ff);
+            animation: spin 5s linear infinite;
+            z-index: 0;
+        }
+
+        .avatar-bg {
+            position: absolute;
+            inset: 2px;
+            border-radius: 50%;
+            background: var(--bg);
+            z-index: 1;
+        }
+
+        .avatar {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        /* Live badge on avatar — hidden by default */
+        .live-badge {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            z-index: 3;
+            background: #e91916;
+            color: white;
+            font-family: 'Syne', sans-serif;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            padding: 2px 7px;
+            border-radius: 5px;
+            border: 2px solid var(--bg);
+            display: none;
+            align-items: center;
+            gap: 4px;
+        }
+        .live-badge.visible { display: flex; }
+
+        .live-dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: #fff;
+            animation: blink 1.2s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+            0%,100% { opacity: 1; transform: scale(1); }
+            50%      { opacity: 0.35; transform: scale(0.65); }
+        }
+
+        .profile-name {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(2rem, 8vw, 2.8rem);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            line-height: 1;
+            background: linear-gradient(120deg, #fff 0%, var(--ice) 35%, var(--cyan) 65%, #0088ff 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 6s linear infinite;
+        }
+
+        @keyframes shimmer { to { background-position: 200% center; } }
+
+        .profile-bio {
+            font-size: 0.87rem;
+            color: rgba(160,205,255,0.42);
+            text-align: center;
+            max-width: 270px;
+            line-height: 1.55;
+        }
+
+        /* ── Divider ── */
+        .divider {
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(0,170,255,0.18), transparent);
+        }
+
+        /* ── Links ── */
+        .links {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .link-btn {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 1rem 1.5rem;
+            border-radius: 16px;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #dff0ff;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            overflow: hidden;
+            transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1),
+                        border-color 0.25s ease,
+                        box-shadow 0.25s ease;
+            animation: fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) both;
+        }
+
+        .link-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .link-btn:hover { transform: translateY(-4px) scale(1.01); }
+        .link-btn:active { transform: translateY(-1px) scale(0.99); }
+
+        .btn-twitch    { animation-delay: 0.15s; }
+        .btn-discord   { animation-delay: 0.22s; }
+        .btn-tiktok    { animation-delay: 0.29s; }
+        .btn-instagram { animation-delay: 0.36s; }
+        .btn-support   { animation-delay: 0.43s; }
+
+        .btn-twitch::before    { background: linear-gradient(135deg,rgba(0,80,255,0.2),rgba(0,200,255,0.06)); }
+        .btn-discord::before   { background: linear-gradient(135deg,rgba(30,60,220,0.22),rgba(0,140,255,0.07)); }
+        .btn-tiktok::before    { background: linear-gradient(135deg,rgba(0,50,140,0.22),rgba(0,210,255,0.08)); }
+        .btn-instagram::before { background: linear-gradient(135deg,rgba(0,50,170,0.22),rgba(0,180,255,0.08)); }
+        .btn-support::before   { background: linear-gradient(135deg,rgba(0,90,200,0.22),rgba(150,220,255,0.06)); }
+
+        .btn-twitch:hover    { border-color: var(--cyan);   box-shadow: 0 0 28px rgba(0,200,255,0.28), 0 8px 30px rgba(0,0,0,0.5); }
+        .btn-discord:hover   { border-color: #5fa8ff;       box-shadow: 0 0 28px rgba(70,130,255,0.28), 0 8px 30px rgba(0,0,0,0.5); }
+        .btn-tiktok:hover    { border-color: #00d4ff;       box-shadow: 0 0 28px rgba(0,200,255,0.22), 0 8px 30px rgba(0,0,0,0.5); }
+        .btn-instagram:hover { border-color: #88ccff;       box-shadow: 0 0 28px rgba(100,180,255,0.22), 0 8px 30px rgba(0,0,0,0.5); }
+        .btn-support:hover   { border-color: var(--ice);    box-shadow: 0 0 28px rgba(168,216,255,0.22), 0 8px 30px rgba(0,0,0,0.5); }
+
+        .link-btn:hover::before { opacity: 1; }
+
+        .btn-icon {
+            width: 20px; height: 20px;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 1;
+            opacity: 0.65;
+        }
+
+        .btn-label {
+            flex: 1;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-arrow {
+            position: relative;
+            z-index: 1;
+            opacity: 0;
+            transform: translateX(-6px);
+            transition: opacity 0.2s, transform 0.2s;
+            color: rgba(140,200,255,0.55);
+        }
+        .link-btn:hover .btn-arrow { opacity: 1; transform: translateX(0); }
+
+        /* ── Footer ── */
+        .footer {
+            font-size: 0.72rem;
+            color: rgba(100,160,220,0.28);
+            letter-spacing: 0.05em;
+            animation: fadeUp 0.8s ease 0.52s both;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-canvas">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <div class="container">
+
+        <!-- Live banner — shown only when streaming -->
+        <a href="https://www.twitch.tv/emmystere5" target="_blank" class="live-banner" id="liveBanner">
+            <div class="live-banner-dot"></div>
+            <span>Emmystere est en live maintenant sur Twitch !</span>
+        </a>
+
+        <!-- Profile -->
+        <div class="profile">
+            <div class="avatar-wrap">
+                <div class="avatar-ring"></div>
+                <div class="avatar-bg"></div>
+                <img class="avatar" src="http://googleusercontent.com/file_content/2" alt="Profil d'Emmystere5">
+                <div class="live-badge" id="liveBadge">
+                    <div class="live-dot"></div>
+                    LIVE
+                </div>
+            </div>
+            <h1 class="profile-name">Emmystere</h1>
+            <p class="profile-bio">Incroyable Streameuse sur Twitch allez la flw</p>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Links -->
+        <div class="links">
+
+            <a href="https://www.twitch.tv/emmystere5" target="_blank" class="link-btn btn-twitch">
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714z"/>
+                </svg>
+                <span class="btn-label">Ma chaîne Twitch</span>
+                <span class="btn-arrow">→</span>
+            </a>
+
+            <a href="https://discord.gg/YnAFJ9u7RM" target="_blank" class="link-btn btn-discord">
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.033.057a19.896 19.896 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/>
+                </svg>
+                <span class="btn-label">Mon Discord</span>
+                <span class="btn-arrow">→</span>
+            </a>
+
+            <a href="https://www.tiktok.com/@emmy_stere5?_t=ZN-8zGt5zgrdxO&_r=1" target="_blank" class="link-btn btn-tiktok">
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.32 6.32 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.83a8.18 8.18 0 004.79 1.54V6.92a4.85 4.85 0 01-1.02-.23z"/>
+                </svg>
+                <span class="btn-label">Mon TikTok</span>
+                <span class="btn-arrow">→</span>
+            </a>
+
+            <a href="#" target="_blank" class="link-btn btn-instagram">
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+                </svg>
+                <span class="btn-label">Mon Instagram</span>
+                <span class="btn-arrow">→</span>
+            </a>
+
+            <a href="#" target="_blank" class="link-btn btn-support">
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/>
+                </svg>
+                <span class="btn-label">Me soutenir</span>
+                <span class="btn-arrow">→</span>
+            </a>
+
+        </div>
+
+        <p class="footer">Créé avec <span style="color:var(--cyan)">♥</span> Par Glitchsize</p>
+
+    </div>
+
+    <script>
+        // ── Twitch Live Detection via decapi.me (no auth required) ──
+        const CHANNEL = 'emmystere5';
+
+        async function checkLive() {
+            try {
+                const res = await fetch(`https://decapi.me/twitch/uptime/${CHANNEL}`);
+                const text = await res.text();
+                // decapi returns a duration string if live, or contains "offline" if not
+                const isLive = !text.toLowerCase().includes('offline') && text.trim().length > 0;
+                document.getElementById('liveBadge').classList.toggle('visible', isLive);
+                document.getElementById('liveBanner').classList.toggle('visible', isLive);
+            } catch (_) { /* silent fail */ }
+        }
+
+        checkLive();
+        setInterval(checkLive, 120_000); // re-check every 2 minutes
+    </script>
+
+</body>
+</html>
