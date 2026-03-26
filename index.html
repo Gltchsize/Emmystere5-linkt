@@ -3,210 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Emmystere5 - Linktree</title>
+    <title>Emmystere</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@200;300;400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg:      #020510;
-            --cyan:    #00c8ff;
-            --ice:     #a8d8ff;
-            --surface: rgba(0, 80, 160, 0.07);
-            --border:  rgba(0, 150, 255, 0.13);
+            --bg: #03060f;
+            --cyan: #00d4ff;
+            --glow: rgba(0,200,255,0.15);
         }
 
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            font-family: 'DM Sans', sans-serif;
-            background-color: var(--bg);
-            color: #dff0ff;
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg);
+            color: #c8e4ff;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 2rem 1rem;
+            padding: 3rem 1.5rem;
             overflow-x: hidden;
         }
 
-        /* ── Starfield canvas ── */
+        /* ── Canvas ── */
         #starCanvas {
             position: fixed;
             inset: 0;
             z-index: 0;
-            width: 100%;
-            height: 100%;
         }
 
-        /* Subtle radial vignette on top of canvas */
-        .vignette {
-            position: fixed;
-            inset: 0;
-            z-index: 1;
-            background: radial-gradient(ellipse at center, transparent 40%, rgba(2,5,16,0.72) 100%);
-            pointer-events: none;
-        }
-
-        /* ── Container ── */
-        .container {
+        /* ── Layout ── */
+        .page {
             position: relative;
             z-index: 2;
             width: 100%;
-            max-width: 480px;
+            max-width: 420px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 2.2rem;
         }
 
-        /* ── Live banner ── */
-        .live-banner {
+        /* ── Live pill ── */
+        .live-pill {
             display: none;
-            width: 100%;
             align-items: center;
-            justify-content: center;
-            gap: 0.6rem;
-            padding: 0.65rem 1.2rem;
-            border-radius: 12px;
-            background: rgba(233,25,22,0.1);
-            border: 1px solid rgba(233,25,22,0.28);
+            gap: 7px;
+            padding: 5px 14px 5px 10px;
+            border-radius: 99px;
+            border: 1px solid rgba(233,25,22,0.35);
+            background: rgba(233,25,22,0.08);
             text-decoration: none;
-            color: #ff9999;
-            font-size: 0.84rem;
-            font-weight: 500;
-            transition: background 0.2s, border-color 0.2s;
-            animation: fadeUp 0.6s ease both;
+            color: #ff8080;
+            font-size: 0.75rem;
+            font-weight: 400;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            margin-bottom: 2.4rem;
+            transition: background 0.2s;
+            animation: fadeUp 0.5s ease both;
         }
-        .live-banner:hover { background: rgba(233,25,22,0.18); border-color: rgba(233,25,22,0.5); }
-        .live-banner.visible { display: flex; }
-
-        .live-banner-dot {
-            width: 8px; height: 8px;
-            border-radius: 50%;
-            background: #e91916;
-            animation: blink 1.2s ease-in-out infinite;
-            flex-shrink: 0;
-        }
-
-        /* ── Profile ── */
-        .profile {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1rem;
-            animation: fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) both;
-        }
-
-        .avatar-wrap {
-            position: relative;
-            width: 112px;
-            height: 112px;
-        }
-
-        .avatar-ring {
-            position: absolute;
-            inset: -4px;
-            border-radius: 50%;
-            background: conic-gradient(from 0deg, #0033cc, #0099dd, #00e0ff, #00aaee, #0044ff, #0033cc);
-            animation: spin 5s linear infinite;
-            z-index: 0;
-        }
-
-        .avatar-ring-glow {
-            position: absolute;
-            inset: -10px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(0,200,255,0.2) 0%, transparent 70%);
-            z-index: 0;
-            animation: glowPulse 3s ease-in-out infinite;
-        }
-
-        @keyframes glowPulse {
-            0%,100% { opacity: 0.6; transform: scale(1); }
-            50%      { opacity: 1;   transform: scale(1.08); }
-        }
-
-        .avatar-bg {
-            position: absolute;
-            inset: 2px;
-            border-radius: 50%;
-            background: var(--bg);
-            z-index: 1;
-        }
-
-        .avatar {
-            position: relative;
-            z-index: 2;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        .live-badge {
-            position: absolute;
-            bottom: 2px;
-            right: 2px;
-            z-index: 3;
-            background: #e91916;
-            color: white;
-            font-family: 'Syne', sans-serif;
-            font-size: 9px;
-            font-weight: 700;
-            letter-spacing: 0.08em;
-            padding: 2px 7px;
-            border-radius: 5px;
-            border: 2px solid var(--bg);
-            display: none;
-            align-items: center;
-            gap: 4px;
-        }
-        .live-badge.visible { display: flex; }
-
+        .live-pill:hover { background: rgba(233,25,22,0.16); }
+        .live-pill.visible { display: flex; }
         .live-dot {
-            width: 6px; height: 6px;
+            width: 7px; height: 7px;
             border-radius: 50%;
-            background: #fff;
+            background: #e91916;
             animation: blink 1.2s ease-in-out infinite;
         }
 
-        @keyframes blink {
-            0%,100% { opacity: 1; transform: scale(1); }
-            50%      { opacity: 0.3; transform: scale(0.6); }
-        }
+        .live-badge { display: none; }
 
-        .profile-name {
-            font-family: 'Syne', sans-serif;
-            font-size: clamp(2rem, 8vw, 2.8rem);
-            font-weight: 800;
-            letter-spacing: -0.02em;
+        /* ── Name ── */
+        .name {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(3.4rem, 14vw, 5.2rem);
+            letter-spacing: 0.06em;
             line-height: 1;
-            background: linear-gradient(120deg, #fff 0%, var(--ice) 35%, var(--cyan) 65%, #0099ff 100%);
-            background-size: 200% auto;
+            color: #fff;
+            text-align: center;
+            background: linear-gradient(160deg, #fff 0%, #a8d8ff 40%, var(--cyan) 80%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            animation: shimmer 6s linear infinite;
-            text-shadow: none;
-            filter: drop-shadow(0 0 18px rgba(0,200,255,0.4));
+            filter: drop-shadow(0 0 40px rgba(0,200,255,0.35));
+            margin-bottom: 0.5rem;
+            animation: fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.05s both;
         }
 
-        @keyframes shimmer { to { background-position: 200% center; } }
-
-        .profile-bio {
-            font-size: 0.87rem;
-            color: rgba(160,210,255,0.42);
+        .bio {
+            font-size: 0.8rem;
+            font-weight: 300;
+            color: rgba(120,170,220,0.5);
             text-align: center;
-            max-width: 270px;
-            line-height: 1.55;
-        }
-
-        /* ── Divider ── */
-        .divider {
-            width: 100%;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(0,180,255,0.2), transparent);
+            letter-spacing: 0.04em;
+            margin-bottom: 3rem;
+            animation: fadeUp 0.8s ease 0.1s both;
         }
 
         /* ── Links ── */
@@ -214,400 +108,312 @@
             width: 100%;
             display: flex;
             flex-direction: column;
-            gap: 0.75rem;
+            gap: 0px;
         }
 
-        .link-btn {
+        .link-item {
             position: relative;
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 0.75rem;
-            padding: 1rem 1.5rem;
-            border-radius: 16px;
+            justify-content: space-between;
+            padding: 1.1rem 0;
             text-decoration: none;
-            font-size: 0.95rem;
-            font-weight: 500;
-            color: #dff0ff;
-            border: 1px solid var(--border);
-            background: var(--surface);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            overflow: hidden;
-            transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1),
-                        border-color 0.25s ease,
-                        box-shadow 0.25s ease;
-            animation: fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) both;
+            color: rgba(180,220,255,0.65);
+            font-size: 0.88rem;
+            font-weight: 300;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            border-bottom: 1px solid rgba(0,150,255,0.08);
+            transition: color 0.25s ease, padding-left 0.25s cubic-bezier(0.34,1.56,0.64,1);
+            animation: fadeUp 0.7s cubic-bezier(0.16,1,0.3,1) both;
+        }
+        .link-item:first-child { border-top: 1px solid rgba(0,150,255,0.08); }
+
+        .link-item:hover {
+            color: #fff;
+            padding-left: 8px;
         }
 
-        .link-btn::before {
+        /* Subtle horizontal glow sweep on hover */
+        .link-item::after {
             content: '';
             position: absolute;
-            inset: 0;
+            left: -20px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 0%;
+            background: var(--cyan);
+            border-radius: 2px;
+            transition: height 0.25s ease;
+            box-shadow: 0 0 12px var(--cyan);
+        }
+        .link-item:hover::after { height: 60%; }
+
+        .link-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .link-icon {
+            width: 17px;
+            height: 17px;
+            opacity: 0.4;
+            flex-shrink: 0;
+            transition: opacity 0.2s;
+            fill: currentColor;
+        }
+        .link-item:hover .link-icon { opacity: 0.9; }
+
+        .link-num {
+            font-size: 0.62rem;
+            color: rgba(0,200,255,0.25);
+            letter-spacing: 0.08em;
+            font-weight: 400;
+            transition: color 0.2s;
+        }
+        .link-item:hover .link-num { color: rgba(0,200,255,0.6); }
+
+        .link-arrow {
+            font-size: 0.65rem;
             opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .link-btn:hover  { transform: translateY(-4px) scale(1.01); }
-        .link-btn:active { transform: translateY(-1px) scale(0.99); }
-
-        .btn-twitch    { animation-delay: 0.15s; }
-        .btn-discord   { animation-delay: 0.22s; }
-        .btn-tiktok    { animation-delay: 0.29s; }
-        .btn-instagram { animation-delay: 0.36s; }
-        .btn-support   { animation-delay: 0.43s; }
-
-        .btn-twitch::before    { background: linear-gradient(135deg,rgba(0,80,255,0.18),rgba(0,200,255,0.06)); }
-        .btn-discord::before   { background: linear-gradient(135deg,rgba(20,60,210,0.2),rgba(0,140,255,0.06)); }
-        .btn-tiktok::before    { background: linear-gradient(135deg,rgba(0,50,140,0.2),rgba(0,210,255,0.07)); }
-        .btn-instagram::before { background: linear-gradient(135deg,rgba(0,50,170,0.2),rgba(0,180,255,0.07)); }
-        .btn-support::before   { background: linear-gradient(135deg,rgba(0,90,200,0.2),rgba(140,220,255,0.05)); }
-
-        .btn-twitch:hover    { border-color: var(--cyan); box-shadow: 0 0 28px rgba(0,200,255,0.3), 0 8px 30px rgba(0,0,0,0.5); }
-        .btn-discord:hover   { border-color: #5fa8ff;     box-shadow: 0 0 28px rgba(60,130,255,0.3), 0 8px 30px rgba(0,0,0,0.5); }
-        .btn-tiktok:hover    { border-color: #00d4ff;     box-shadow: 0 0 28px rgba(0,200,255,0.25), 0 8px 30px rgba(0,0,0,0.5); }
-        .btn-instagram:hover { border-color: #88ccff;     box-shadow: 0 0 28px rgba(100,180,255,0.25), 0 8px 30px rgba(0,0,0,0.5); }
-        .btn-support:hover   { border-color: var(--ice);  box-shadow: 0 0 28px rgba(168,216,255,0.22), 0 8px 30px rgba(0,0,0,0.5); }
-
-        .link-btn:hover::before { opacity: 1; }
-
-        .btn-icon  { width:20px; height:20px; flex-shrink:0; position:relative; z-index:1; opacity:0.65; }
-        .btn-label { flex:1; text-align:center; position:relative; z-index:1; }
-        .btn-arrow {
-            position:relative; z-index:1;
-            opacity:0; transform:translateX(-6px);
+            transform: translateX(-6px);
             transition: opacity 0.2s, transform 0.2s;
-            color:rgba(140,200,255,0.55);
+            color: rgba(0,200,255,0.5);
         }
-        .link-btn:hover .btn-arrow { opacity:1; transform:translateX(0); }
+        .link-item:hover .link-arrow { opacity: 1; transform: translateX(0); }
+
+        /* delays */
+        .link-item:nth-child(1) { animation-delay: 0.18s; }
+        .link-item:nth-child(2) { animation-delay: 0.24s; }
+        .link-item:nth-child(3) { animation-delay: 0.30s; }
+        .link-item:nth-child(4) { animation-delay: 0.36s; }
+        .link-item:nth-child(5) { animation-delay: 0.42s; }
 
         /* ── Footer ── */
         .footer {
-            font-size: 0.72rem;
-            color: rgba(100,160,220,0.28);
-            letter-spacing: 0.05em;
-            animation: fadeUp 0.8s ease 0.52s both;
+            margin-top: 3.5rem;
+            font-size: 0.65rem;
+            letter-spacing: 0.15em;
+            color: rgba(60,100,160,0.3);
+            text-transform: uppercase;
+            animation: fadeUp 0.8s ease 0.55s both;
         }
+        .footer span { color: rgba(0,200,255,0.3); }
 
-        @keyframes spin    { to { transform: rotate(360deg); } }
-        @keyframes fadeUp  {
-            from { opacity:0; transform:translateY(20px); }
+        /* ── Animations ── */
+        @keyframes fadeUp {
+            from { opacity:0; transform:translateY(16px); }
             to   { opacity:1; transform:translateY(0); }
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes blink {
+            0%,100% { opacity:1; }
+            50%      { opacity:0.2; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Animated starfield -->
-    <canvas id="starCanvas"></canvas>
-    <div class="vignette"></div>
+<canvas id="starCanvas"></canvas>
 
-    <div class="container">
+<div class="page">
 
-        <!-- Live banner -->
-        <a href="https://www.twitch.tv/emmystere5" target="_blank" class="live-banner" id="liveBanner">
-            <div class="live-banner-dot"></div>
-            <span>Emmystere est en live maintenant sur Twitch !</span>
+    <a href="https://www.twitch.tv/emmystere5" target="_blank" class="live-pill" id="liveBanner">
+        <div class="live-dot"></div>
+        En live sur Twitch maintenant
+    </a>
+
+
+<h1 class="name">Emmystere</h1>
+    <p class="bio">Streameuse Twitch · Allez la follow</p>
+
+    <nav class="links">
+
+        <a href="https://www.twitch.tv/emmystere5" target="_blank" class="link-item">
+            <div class="link-left">
+                <span class="link-num">01</span>
+                <svg class="link-icon" viewBox="0 0 24 24"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714z"/></svg>
+                Twitch
+            </div>
+            <span class="link-arrow">↗</span>
         </a>
 
-        <!-- Profile -->
-        <div class="profile">
-            <div class="avatar-wrap">
-                <div class="avatar-ring-glow"></div>
-                <div class="avatar-ring"></div>
-                <div class="avatar-bg"></div>
-                <img class="avatar"
-                     src="https://cdn.discordapp.com/attachments/1480977604646535289/1483819995929776148/d9f4e13388f7fafa13c19b07877decaf.jpg?ex=69bbfa8f&is=69baa90f&hm=340bad3b2b26cc8fb88177f1bf03564a6953624e7bb3f1f1004f5fbc0e212c29&"
-                     alt="Profil d'Emmystere5"
-                     crossorigin="anonymous">
-                <div class="live-badge" id="liveBadge">
-                    <div class="live-dot"></div>LIVE
-                </div>
+        <a href="https://discord.gg/YnAFJ9u7RM" target="_blank" class="link-item">
+            <div class="link-left">
+                <span class="link-num">02</span>
+                <svg class="link-icon" viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.033.057a19.896 19.896 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+                Discord
             </div>
-            <h1 class="profile-name">Emmystere</h1>
-            <p class="profile-bio">Incroyable Streameuse sur Twitch allez la flw</p>
-        </div>
+            <span class="link-arrow">↗</span>
+        </a>
 
-        <div class="divider"></div>
+        <a href="https://www.tiktok.com/@emmy_stere5?_t=ZN-8zGt5zgrdxO&_r=1" target="_blank" class="link-item">
+            <div class="link-left">
+                <span class="link-num">03</span>
+                <svg class="link-icon" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.32 6.32 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.83a8.18 8.18 0 004.79 1.54V6.92a4.85 4.85 0 01-1.02-.23z"/></svg>
+                TikTok
+            </div>
+            <span class="link-arrow">↗</span>
+        </a>
 
-        <!-- Links -->
-        <div class="links">
+        <a href="#" target="_blank" class="link-item">
+            <div class="link-left">
+                <span class="link-num">04</span>
+                <svg class="link-icon" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                Instagram
+            </div>
+            <span class="link-arrow">↗</span>
+        </a>
 
-            <a href="https://www.twitch.tv/emmystere5" target="_blank" class="link-btn btn-twitch">
-                <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714z"/>
-                </svg>
-                <span class="btn-label">Ma chaîne Twitch</span>
-                <span class="btn-arrow">→</span>
-            </a>
+        <a href="#" target="_blank" class="link-item">
+            <div class="link-left">
+                <span class="link-num">05</span>
+                <svg class="link-icon" viewBox="0 0 24 24"><path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/></svg>
+                Me soutenir
+            </div>
+            <span class="link-arrow">↗</span>
+        </a>
 
-            <a href="https://discord.gg/YnAFJ9u7RM" target="_blank" class="link-btn btn-discord">
-                <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.033.057a19.896 19.896 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/>
-                </svg>
-                <span class="btn-label">Mon Discord</span>
-                <span class="btn-arrow">→</span>
-            </a>
+    </nav>
 
-            <a href="https://www.tiktok.com/@emmy_stere5?_t=ZN-8zGt5zgrdxO&_r=1" target="_blank" class="link-btn btn-tiktok">
-                <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.32 6.32 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.83a8.18 8.18 0 004.79 1.54V6.92a4.85 4.85 0 01-1.02-.23z"/>
-                </svg>
-                <span class="btn-label">Mon TikTok</span>
-                <span class="btn-arrow">→</span>
-            </a>
+    <p class="footer">Créé par <span>Glitchsize</span></p>
 
-            <a href="#" target="_blank" class="link-btn btn-instagram">
-                <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
-                </svg>
-                <span class="btn-label">Mon Instagram</span>
-                <span class="btn-arrow">→</span>
-            </a>
+</div>
 
-            <a href="#" target="_blank" class="link-btn btn-support">
-                <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/>
-                </svg>
-                <span class="btn-label">Me soutenir</span>
-                <span class="btn-arrow">→</span>
-            </a>
+<script>
+// ── Starfield ──
+(function () {
+    const canvas = document.getElementById('starCanvas');
+    const ctx = canvas.getContext('2d');
+    let W, H, stars = [], shoots = [];
+    let frame = 0;
 
-        </div>
+    const COLORS = [
+        'rgba(255,255,255,', 'rgba(168,216,255,',
+        'rgba(0,200,255,',   'rgba(100,160,255,',
+    ];
 
-        <p class="footer">Créé avec <span style="color:var(--cyan)">♥</span> Par Glitchsize</p>
-
-    </div>
-
-    <script>
-    // ══════════════════════════════════════════
-    //   STARFIELD ANIMATION
-    // ══════════════════════════════════════════
-    (function () {
-        const canvas = document.getElementById('starCanvas');
-        const ctx    = canvas.getContext('2d');
-
-        let W, H, stars = [], nebulae = [], shootingStars = [];
-
-        // Star colours — blue night / glacial cyan palette
-        const STAR_COLORS = [
-            'rgba(255,255,255,',    // pure white
-            'rgba(168,216,255,',    // ice blue
-            'rgba(0,200,255,',      // cyan
-            'rgba(100,160,255,',    // soft blue
-            'rgba(60,100,200,',     // deep blue
-        ];
-
-        function resize() {
-            W = canvas.width  = window.innerWidth;
-            H = canvas.height = window.innerHeight;
-            initStars();
-            initNebulae();
-        }
-
-        // ── Stars ──
-        function initStars() {
-            const count = Math.floor((W * H) / 3200);
-            stars = [];
-            for (let i = 0; i < count; i++) {
-                stars.push(createStar());
-            }
-        }
-
-        function createStar(x, y) {
-            const size  = Math.random() * 1.8 + 0.2;
-            const color = STAR_COLORS[Math.floor(Math.random() * STAR_COLORS.length)];
-            return {
-                x:     x ?? Math.random() * W,
-                y:     y ?? Math.random() * H,
-                size,
-                baseSize: size,
-                color,
-                alpha:   Math.random() * 0.6 + 0.3,
-                baseAlpha: Math.random() * 0.6 + 0.3,
-                // Twinkling
-                twinkleSpeed: Math.random() * 0.02 + 0.005,
-                twinklePhase: Math.random() * Math.PI * 2,
-                // Slow drift
-                vx: (Math.random() - 0.5) * 0.06,
-                vy: (Math.random() - 0.5) * 0.03,
-                // Some stars are larger "sparkles"
-                sparkle: Math.random() < 0.08,
-            };
-        }
-
-        // ── Nebula blobs (atmospheric depth) ──
-        function initNebulae() {
-            nebulae = [];
-            const blobs = [
-                { cx: W * 0.15, cy: H * 0.2,  r: W * 0.35, color: 'rgba(0,40,140,' },
-                { cx: W * 0.85, cy: H * 0.75, r: W * 0.3,  color: 'rgba(0,80,180,' },
-                { cx: W * 0.5,  cy: H * 0.5,  r: W * 0.2,  color: 'rgba(0,30,100,' },
-                { cx: W * 0.7,  cy: H * 0.15, r: W * 0.22, color: 'rgba(0,60,160,' },
-            ];
-            blobs.forEach(b => {
-                const g = ctx.createRadialGradient(b.cx, b.cy, 0, b.cx, b.cy, b.r);
-                g.addColorStop(0,   b.color + '0.12)');
-                g.addColorStop(0.5, b.color + '0.05)');
-                g.addColorStop(1,   b.color + '0)');
-                nebulae.push({ ...b, gradient: g });
-            });
-        }
-
-        // ── Shooting stars ──
-        function spawnShootingStar() {
-            const angle  = Math.PI / 5 + Math.random() * 0.3; // diagonal
-            const speed  = 8 + Math.random() * 10;
-            const length = 80 + Math.random() * 160;
-            return {
-                x:     Math.random() * W,
-                y:     Math.random() * H * 0.5,
-                vx:    Math.cos(angle) * speed,
-                vy:    Math.sin(angle) * speed,
-                length,
-                alpha: 1,
-                fade:  0.025 + Math.random() * 0.02,
-                color: Math.random() < 0.5 ? 'rgba(0,200,255,' : 'rgba(168,216,255,',
-            };
-        }
-
-        // ── Draw ──
-        let frame = 0;
-
-        function draw() {
-            ctx.clearRect(0, 0, W, H);
-
-            // Sky gradient
-            const sky = ctx.createLinearGradient(0, 0, 0, H);
-            sky.addColorStop(0, '#020510');
-            sky.addColorStop(0.5, '#030818');
-            sky.addColorStop(1, '#040a1e');
-            ctx.fillStyle = sky;
-            ctx.fillRect(0, 0, W, H);
-
-            // Nebulae
-            nebulae.forEach(n => {
-                ctx.fillStyle = n.gradient;
-                ctx.beginPath();
-                ctx.arc(n.cx, n.cy, n.r, 0, Math.PI * 2);
-                ctx.fill();
-            });
-
-            // Stars
-            stars.forEach(s => {
-                // Twinkle
-                s.twinklePhase += s.twinkleSpeed;
-                s.alpha = s.baseAlpha + Math.sin(s.twinklePhase) * 0.25;
-                s.alpha = Math.max(0.05, Math.min(1, s.alpha));
-
-                // Drift
-                s.x += s.vx;
-                s.y += s.vy;
-                if (s.x < 0) s.x = W;
-                if (s.x > W) s.x = 0;
-                if (s.y < 0) s.y = H;
-                if (s.y > H) s.y = 0;
-
-                ctx.save();
-                ctx.globalAlpha = s.alpha;
-
-                if (s.sparkle) {
-                    // Cross / sparkle shape
-                    const sz = s.baseSize * 1.6;
-                    ctx.strokeStyle = s.color + '1)';
-                    ctx.lineWidth   = 0.6;
-                    ctx.beginPath();
-                    ctx.moveTo(s.x - sz, s.y);
-                    ctx.lineTo(s.x + sz, s.y);
-                    ctx.stroke();
-                    ctx.beginPath();
-                    ctx.moveTo(s.x, s.y - sz);
-                    ctx.lineTo(s.x, s.y + sz);
-                    ctx.stroke();
-                    // Glow
-                    const g = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, sz * 2.5);
-                    g.addColorStop(0, s.color + '0.5)');
-                    g.addColorStop(1, s.color + '0)');
-                    ctx.fillStyle = g;
-                    ctx.beginPath();
-                    ctx.arc(s.x, s.y, sz * 2.5, 0, Math.PI * 2);
-                    ctx.fill();
-                } else {
-                    // Normal circle star
-                    const g = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, s.baseSize * 2);
-                    g.addColorStop(0, s.color + '1)');
-                    g.addColorStop(1, s.color + '0)');
-                    ctx.fillStyle = g;
-                    ctx.beginPath();
-                    ctx.arc(s.x, s.y, s.baseSize * 2, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-
-                ctx.restore();
-            });
-
-            // Shooting stars
-            if (frame % 180 === 0 && Math.random() < 0.6) {
-                shootingStars.push(spawnShootingStar());
-            }
-
-            shootingStars = shootingStars.filter(ss => ss.alpha > 0);
-            shootingStars.forEach(ss => {
-                ctx.save();
-                ctx.globalAlpha = ss.alpha;
-
-                const grad = ctx.createLinearGradient(
-                    ss.x, ss.y,
-                    ss.x - ss.vx / Math.hypot(ss.vx, ss.vy) * ss.length,
-                    ss.y - ss.vy / Math.hypot(ss.vx, ss.vy) * ss.length
-                );
-                grad.addColorStop(0, ss.color + '1)');
-                grad.addColorStop(1, ss.color + '0)');
-
-                ctx.strokeStyle = grad;
-                ctx.lineWidth   = 1.5;
-                ctx.lineCap     = 'round';
-                ctx.beginPath();
-                ctx.moveTo(ss.x, ss.y);
-                ctx.lineTo(
-                    ss.x - ss.vx / Math.hypot(ss.vx, ss.vy) * ss.length,
-                    ss.y - ss.vy / Math.hypot(ss.vx, ss.vy) * ss.length
-                );
-                ctx.stroke();
-                ctx.restore();
-
-                ss.x     += ss.vx;
-                ss.y     += ss.vy;
-                ss.alpha -= ss.fade;
-            });
-
-            frame++;
-            requestAnimationFrame(draw);
-        }
-
-        window.addEventListener('resize', resize);
-        resize();
-        draw();
-    })();
-
-    // ══════════════════════════════════════════
-    //   TWITCH LIVE DETECTION
-    // ══════════════════════════════════════════
-    const CHANNEL = 'emmystere5';
-
-    async function checkLive() {
-        try {
-            const res  = await fetch(`https://decapi.me/twitch/uptime/${CHANNEL}`);
-            const text = await res.text();
-            const isLive = !text.toLowerCase().includes('offline') && text.trim().length > 0;
-            document.getElementById('liveBadge').classList.toggle('visible', isLive);
-            document.getElementById('liveBanner').classList.toggle('visible', isLive);
-        } catch (_) {}
+    function resize() {
+        W = canvas.width  = window.innerWidth;
+        H = canvas.height = window.innerHeight;
+        stars = Array.from({ length: Math.floor(W * H / 3500) }, () => mkStar());
     }
 
-    checkLive();
-    setInterval(checkLive, 120_000);
-    </script>
+    function mkStar() {
+        const c = COLORS[Math.floor(Math.random() * COLORS.length)];
+        const a = Math.random() * 0.55 + 0.2;
+        return {
+            x: Math.random() * W, y: Math.random() * H,
+            r: Math.random() * 1.4 + 0.2,
+            col: c,
+            a, base: a,
+            phase: Math.random() * Math.PI * 2,
+            speed: Math.random() * 0.018 + 0.004,
+            vx: (Math.random() - 0.5) * 0.05,
+            vy: (Math.random() - 0.5) * 0.025,
+            spark: Math.random() < 0.07,
+        };
+    }
+
+    function mkShoot() {
+        const angle = Math.PI / 5 + (Math.random() - 0.5) * 0.4;
+        const spd = 9 + Math.random() * 9;
+        return {
+            x: Math.random() * W,
+            y: Math.random() * H * 0.5,
+            vx: Math.cos(angle) * spd,
+            vy: Math.sin(angle) * spd,
+            len: 70 + Math.random() * 130,
+            a: 1,
+            fade: 0.022 + Math.random() * 0.018,
+            col: Math.random() < 0.5 ? 'rgba(0,200,255,' : 'rgba(168,216,255,',
+        };
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, W, H);
+        // sky
+        const sky = ctx.createLinearGradient(0, 0, 0, H);
+        sky.addColorStop(0, '#020510');
+        sky.addColorStop(1, '#030a1c');
+        ctx.fillStyle = sky;
+        ctx.fillRect(0, 0, W, H);
+
+        // vignette
+        const vig = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, Math.max(W,H)*0.7);
+        vig.addColorStop(0, 'transparent');
+        vig.addColorStop(1, 'rgba(2,5,16,0.65)');
+        ctx.fillStyle = vig;
+        ctx.fillRect(0, 0, W, H);
+
+        // stars
+        for (const s of stars) {
+            s.phase += s.speed;
+            s.a = Math.max(0.05, Math.min(1, s.base + Math.sin(s.phase) * 0.22));
+            s.x += s.vx; s.y += s.vy;
+            if (s.x < 0) s.x = W; if (s.x > W) s.x = 0;
+            if (s.y < 0) s.y = H; if (s.y > H) s.y = 0;
+            ctx.save();
+            ctx.globalAlpha = s.a;
+            if (s.spark) {
+                const sz = s.r * 1.8;
+                ctx.strokeStyle = s.col + '1)';
+                ctx.lineWidth = 0.5;
+                ctx.beginPath(); ctx.moveTo(s.x-sz,s.y); ctx.lineTo(s.x+sz,s.y); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(s.x,s.y-sz); ctx.lineTo(s.x,s.y+sz); ctx.stroke();
+            } else {
+                const g = ctx.createRadialGradient(s.x,s.y,0,s.x,s.y,s.r*2.2);
+                g.addColorStop(0, s.col+'1)'); g.addColorStop(1, s.col+'0)');
+                ctx.fillStyle = g;
+                ctx.beginPath(); ctx.arc(s.x, s.y, s.r*2.2, 0, Math.PI*2); ctx.fill();
+            }
+            ctx.restore();
+        }
+
+        // shooting stars
+        if (frame % 200 === 0 && Math.random() < 0.55) shoots.push(mkShoot());
+        shoots = shoots.filter(s => s.a > 0);
+        for (const s of shoots) {
+            const mag = Math.hypot(s.vx, s.vy);
+            const g = ctx.createLinearGradient(s.x, s.y, s.x - s.vx/mag*s.len, s.y - s.vy/mag*s.len);
+            g.addColorStop(0, s.col+'1)'); g.addColorStop(1, s.col+'0)');
+            ctx.save();
+            ctx.globalAlpha = s.a;
+            ctx.strokeStyle = g;
+            ctx.lineWidth = 1.2;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.moveTo(s.x, s.y);
+            ctx.lineTo(s.x - s.vx/mag*s.len, s.y - s.vy/mag*s.len);
+            ctx.stroke();
+            ctx.restore();
+            s.x += s.vx; s.y += s.vy; s.a -= s.fade;
+        }
+
+        frame++;
+        requestAnimationFrame(draw);
+    }
+
+    window.addEventListener('resize', resize);
+    resize();
+    draw();
+})();
+
+// ── Live check ──
+async function checkLive() {
+    try {
+        const res = await fetch('https://decapi.me/twitch/uptime/emmystere5');
+        const txt = await res.text();
+        const on = !txt.toLowerCase().includes('offline') && txt.trim().length > 0;
+        document.getElementById('liveBadge').classList.toggle('visible', on);
+        document.getElementById('liveBanner').classList.toggle('visible', on);
+    } catch(_) {}
+}
+checkLive();
+setInterval(checkLive, 120_000);
+</script>
 
 </body>
 </html>
